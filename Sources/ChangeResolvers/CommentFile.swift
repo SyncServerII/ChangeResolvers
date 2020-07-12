@@ -126,7 +126,7 @@ public struct CommentFile: Sequence, Equatable, WholeFileReplacer {
         case idIsNotNew
     }
     
-    public static func convert(data: Data) throws -> FixedObject {
+    static func convert(data: Data) throws -> FixedObject {
         let jsonObject:Any? = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0))
         guard let fixedObject = jsonObject as? FixedObject else {
             throw ConflictFreeSequenceError.noFixedObject
@@ -135,7 +135,12 @@ public struct CommentFile: Sequence, Equatable, WholeFileReplacer {
     }
     
     // The dictionary passed must have a key `id`; the value of that key must be a String, and it must not be the same as any other id for fixed objects added, or obtained through the init `withFile` constructor, previously.
-    mutating public func add(newRecord: FixedObject) throws {
+    mutating public func add(newRecord: Data) throws {
+        let newRecord = try Self.convert(data: newRecord)
+        try add(newRecord: newRecord)
+    }
+    
+    mutating func add(newRecord: FixedObject) throws {
         guard let newId = newRecord[Self.idKey] as? String else {
             throw Errors.noId
         }

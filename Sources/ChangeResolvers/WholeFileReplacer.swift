@@ -5,13 +5,10 @@ import Foundation
 
 // The intent is that, while the method in a object conforming to this protocol may throw errors due to some internal problem or general problem with the data they receive, they will never throw errors purely due to merge conflicts. They will always be able to resolve merge conflicts.
 public protocol WholeFileReplacer: ChangeResolver {
-    associatedtype RECORD
-    
     // Reconstitute the file from Data.
     init(with data: Data) throws
     
-    static func convert(data: Data) throws -> RECORD
-    mutating func add(newRecord: RECORD) throws
+    mutating func add(newRecord: Data) throws
     
     // Convert the entire file into a Data object
     func getData() throws -> Data

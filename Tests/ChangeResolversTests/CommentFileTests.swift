@@ -1,6 +1,6 @@
 
 import XCTest
-import ChangeResolvers
+@testable import ChangeResolvers
 
 class CommentFileTests: XCTestCase {
     static func newJSONFile() -> URL {
