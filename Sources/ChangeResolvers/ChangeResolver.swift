@@ -9,5 +9,5 @@ import Foundation
 
 public protocol ChangeResolver {
     // This must be unique across all ChangeResolvers registered with the server.
-    var changeResolverName: String { get }
+    static var changeResolverName: String { get }
 }

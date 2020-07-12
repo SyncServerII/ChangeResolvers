@@ -33,7 +33,7 @@ In terms of the members of the FixedObjects structure below, the `mainDictionary
 import Foundation
 
 public struct CommentFile: Sequence, Equatable, WholeFileReplacer {
-    public var changeResolverName: String = "CommentFile"
+    public static var changeResolverName: String = "CommentFile"
     
     enum ConflictFreeSequenceError: Error {
         case noMainDictionary
