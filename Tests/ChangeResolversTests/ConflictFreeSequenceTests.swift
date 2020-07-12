@@ -2,7 +2,7 @@
 import XCTest
 import ChangeResolvers
 
-class ConflictFreeSequenceTests: XCTestCase {
+class CommentFileTests: XCTestCase {
     static func newJSONFile() -> URL {
         return URL(fileURLWithPath: "/tmp/" + UUID().uuidString + ".json")
     }
@@ -18,10 +18,10 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testAddNewFixedObjectWorks() {
-        var fixedObjects = ConflictFreeSequence()
+        var fixedObjects = CommentFile()
         
         do {
-            try fixedObjects.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try fixedObjects.add(newRecord: [CommentFile.idKey: "1"])
         } catch {
             XCTFail()
             return
@@ -29,7 +29,7 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testAddNewFixedObjectWithNoIdFails() {
-        var fixedObjects = ConflictFreeSequence()
+        var fixedObjects = CommentFile()
         
         do {
             try fixedObjects.add(newRecord: ["blah": 1])
@@ -39,30 +39,30 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testAddNewFixedObjectWithSameIdFails() {
-        var fixedObjects = ConflictFreeSequence()
+        var fixedObjects = CommentFile()
 
         do {
-            try fixedObjects.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try fixedObjects.add(newRecord: [CommentFile.idKey: "1"])
         } catch {
             XCTFail()
             return
         }
         
         do {
-            try fixedObjects.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try fixedObjects.add(newRecord: [CommentFile.idKey: "1"])
             XCTFail()
         } catch {
         }
     }
     
     @discardableResult
-    func saveToFileWithJustId() -> (ConflictFreeSequence, URL)? {
-        var fixedObjects = ConflictFreeSequence()
+    func saveToFileWithJustId() -> (CommentFile, URL)? {
+        var fixedObjects = CommentFile()
 
         let url = Self.newJSONFile()
         print("url: \(url)")
         do {
-            try fixedObjects.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try fixedObjects.add(newRecord: [CommentFile.idKey: "1"])
             try fixedObjects.save(toFile: url as URL)
         } catch {
             XCTFail()
@@ -77,14 +77,14 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     @discardableResult
-    func saveToFileWithIdAndOherContents() -> (ConflictFreeSequence, URL)? {
-        var fixedObjects = ConflictFreeSequence()
+    func saveToFileWithIdAndOherContents() -> (CommentFile, URL)? {
+        var fixedObjects = CommentFile()
 
         let url = Self.newJSONFile()
         print("url: \(url)")
         do {
             try fixedObjects.add(newRecord: [
-                ConflictFreeSequence.idKey: "1",
+                CommentFile.idKey: "1",
                 "Foobar": 1,
                 "snafu": ["Nested": "object"]
             ])
@@ -102,8 +102,8 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     @discardableResult
-    func saveToFileWithQuoteInContents() -> (ConflictFreeSequence, URL)? {
-        var fixedObjects = ConflictFreeSequence()
+    func saveToFileWithQuoteInContents() -> (CommentFile, URL)? {
+        var fixedObjects = CommentFile()
 
         let quote1 = "\""
         let quote2 = "'"
@@ -112,7 +112,7 @@ class ConflictFreeSequenceTests: XCTestCase {
         print("url: \(url)")
         do {
             try fixedObjects.add(newRecord: [
-                ConflictFreeSequence.idKey: "1",
+                CommentFile.idKey: "1",
                 "test1": quote1,
                 "test2": quote2
             ])
@@ -130,43 +130,43 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testEqualityForSameObjectsWorks() {
-        let fixedObjects = ConflictFreeSequence()
+        let fixedObjects = CommentFile()
         XCTAssert(fixedObjects == fixedObjects)
     }
     
     func testEqualityForEmptyObjectsWorks() {
-        let fixedObjects1 = ConflictFreeSequence()
-        let fixedObjects2 = ConflictFreeSequence()
+        let fixedObjects1 = CommentFile()
+        let fixedObjects2 = CommentFile()
         XCTAssert(fixedObjects1 == fixedObjects2)
     }
     
     func testNonEqualityForEmptyAndNonEmptyObjectsWorks() {
-        var fixedObjects1 = ConflictFreeSequence()
+        var fixedObjects1 = CommentFile()
         
         do {
-            try fixedObjects1.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try fixedObjects1.add(newRecord: [CommentFile.idKey: "1"])
         } catch {
             XCTFail()
             return
         }
         
-        let fixedObjects2 = ConflictFreeSequence()
+        let fixedObjects2 = CommentFile()
         
         XCTAssert(fixedObjects1 != fixedObjects2)
     }
     
     func testNonEqualityForSimilarObjectsWorks() {
-        var fixedObjects1 = ConflictFreeSequence()
+        var fixedObjects1 = CommentFile()
         do {
-            try fixedObjects1.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try fixedObjects1.add(newRecord: [CommentFile.idKey: "1"])
         } catch {
             XCTFail()
             return
         }
         
-        var fixedObjects2 = ConflictFreeSequence()
+        var fixedObjects2 = CommentFile()
         do {
-            try fixedObjects2.add(newRecord: [ConflictFreeSequence.idKey: "2"])
+            try fixedObjects2.add(newRecord: [CommentFile.idKey: "2"])
         } catch {
             XCTFail()
             return
@@ -176,17 +176,17 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
 
     func testEqualityForEquivalentObjectsWorks() {
-        var fixedObjects1 = ConflictFreeSequence()
+        var fixedObjects1 = CommentFile()
         do {
-            try fixedObjects1.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try fixedObjects1.add(newRecord: [CommentFile.idKey: "1"])
         } catch {
             XCTFail()
             return
         }
         
-        var fixedObjects2 = ConflictFreeSequence()
+        var fixedObjects2 = CommentFile()
         do {
-            try fixedObjects2.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try fixedObjects2.add(newRecord: [CommentFile.idKey: "1"])
         } catch {
             XCTFail()
             return
@@ -196,7 +196,7 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testObjectsDoNotChangeWhenWritten() throws {
-        let testData:[(fixedObject: ConflictFreeSequence, url: URL)?] = [
+        let testData:[(fixedObject: CommentFile, url: URL)?] = [
             saveToFileWithJustId(),
             saveToFileWithIdAndOherContents(),
             saveToFileWithQuoteInContents()
@@ -208,24 +208,24 @@ class ConflictFreeSequenceTests: XCTestCase {
                 return
             }
             
-            let fromFile = try ConflictFreeSequence(with: data.url)
+            let fromFile = try CommentFile(with: data.url)
             
             XCTAssert(data.fixedObject == fromFile)
         }
     }
     
     func testEquivalanceWithNonEqualSameSizeWorks() {
-        var fixedObjects1 = ConflictFreeSequence()
+        var fixedObjects1 = CommentFile()
         do {
-            try fixedObjects1.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try fixedObjects1.add(newRecord: [CommentFile.idKey: "1"])
         } catch {
             XCTFail()
             return
         }
         
-        var fixedObjects2 = ConflictFreeSequence()
+        var fixedObjects2 = CommentFile()
         do {
-            try fixedObjects2.add(newRecord: [ConflictFreeSequence.idKey: "2"])
+            try fixedObjects2.add(newRecord: [CommentFile.idKey: "2"])
         } catch {
             XCTFail()
             return
@@ -235,18 +235,18 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testEquivalanceWithNonEqualsDiffSizeWorks() {
-        var fixedObjects1 = ConflictFreeSequence()
+        var fixedObjects1 = CommentFile()
         do {
-            try fixedObjects1.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try fixedObjects1.add(newRecord: [CommentFile.idKey: "1"])
         } catch {
             XCTFail()
             return
         }
         
-        var fixedObjects2 = ConflictFreeSequence()
+        var fixedObjects2 = CommentFile()
         do {
-            try fixedObjects2.add(newRecord: [ConflictFreeSequence.idKey: "1"])
-            try fixedObjects2.add(newRecord: [ConflictFreeSequence.idKey: "2"])
+            try fixedObjects2.add(newRecord: [CommentFile.idKey: "1"])
+            try fixedObjects2.add(newRecord: [CommentFile.idKey: "2"])
         } catch {
             XCTFail()
             return
@@ -256,9 +256,9 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testMergeWithSameWorks() {
-        var fixedObjects = ConflictFreeSequence()
+        var fixedObjects = CommentFile()
         do {
-            try fixedObjects.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try fixedObjects.add(newRecord: [CommentFile.idKey: "1"])
         } catch {
             XCTFail()
             return
@@ -271,8 +271,8 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testMergeNeitherHaveObjectsWorks() {
-        let fixedObjects1 = ConflictFreeSequence()
-        let fixedObjects2 = ConflictFreeSequence()
+        let fixedObjects1 = CommentFile()
+        let fixedObjects2 = CommentFile()
         
         let (result, unread) = fixedObjects1.merge(with: fixedObjects2)
         XCTAssert(unread  == 0)
@@ -281,17 +281,17 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
 
     func testMergeOnlyHaveSameObjectWorks() {
-        var fixedObjects1 = ConflictFreeSequence()
+        var fixedObjects1 = CommentFile()
         do {
-            try fixedObjects1.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try fixedObjects1.add(newRecord: [CommentFile.idKey: "1"])
         } catch {
             XCTFail()
             return
         }
         
-        var fixedObjects2 = ConflictFreeSequence()
+        var fixedObjects2 = CommentFile()
         do {
-            try fixedObjects2.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try fixedObjects2.add(newRecord: [CommentFile.idKey: "1"])
         } catch {
             XCTFail()
             return
@@ -304,29 +304,29 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
 
     func testMergeHaveSomeSameObjectsWorks() {
-        var standard = ConflictFreeSequence()
+        var standard = CommentFile()
         do {
-            try standard.add(newRecord: [ConflictFreeSequence.idKey: "1"])
-            try standard.add(newRecord: [ConflictFreeSequence.idKey: "2"])
-            try standard.add(newRecord: [ConflictFreeSequence.idKey: "3"])
+            try standard.add(newRecord: [CommentFile.idKey: "1"])
+            try standard.add(newRecord: [CommentFile.idKey: "2"])
+            try standard.add(newRecord: [CommentFile.idKey: "3"])
         } catch {
             XCTFail()
             return
         }
         
-        var fixedObjects1 = ConflictFreeSequence()
+        var fixedObjects1 = CommentFile()
         do {
-            try fixedObjects1.add(newRecord: [ConflictFreeSequence.idKey: "1"])
-            try fixedObjects1.add(newRecord: [ConflictFreeSequence.idKey: "2"])
+            try fixedObjects1.add(newRecord: [CommentFile.idKey: "1"])
+            try fixedObjects1.add(newRecord: [CommentFile.idKey: "2"])
         } catch {
             XCTFail()
             return
         }
         
-        var fixedObjects2 = ConflictFreeSequence()
+        var fixedObjects2 = CommentFile()
         do {
-            try fixedObjects2.add(newRecord: [ConflictFreeSequence.idKey: "1"])
-            try fixedObjects2.add(newRecord: [ConflictFreeSequence.idKey: "3"])
+            try fixedObjects2.add(newRecord: [CommentFile.idKey: "1"])
+            try fixedObjects2.add(newRecord: [CommentFile.idKey: "3"])
         } catch {
             XCTFail()
             return
@@ -339,30 +339,30 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testMergeHaveNoSameObjectsWorks() {
-        var standard = ConflictFreeSequence()
+        var standard = CommentFile()
         do {
-            try standard.add(newRecord: [ConflictFreeSequence.idKey: "1"])
-            try standard.add(newRecord: [ConflictFreeSequence.idKey: "2"])
-            try standard.add(newRecord: [ConflictFreeSequence.idKey: "3"])
-            try standard.add(newRecord: [ConflictFreeSequence.idKey: "4"])
+            try standard.add(newRecord: [CommentFile.idKey: "1"])
+            try standard.add(newRecord: [CommentFile.idKey: "2"])
+            try standard.add(newRecord: [CommentFile.idKey: "3"])
+            try standard.add(newRecord: [CommentFile.idKey: "4"])
         } catch {
             XCTFail()
             return
         }
         
-        var fixedObjects1 = ConflictFreeSequence()
+        var fixedObjects1 = CommentFile()
         do {
-            try fixedObjects1.add(newRecord: [ConflictFreeSequence.idKey: "1"])
-            try fixedObjects1.add(newRecord: [ConflictFreeSequence.idKey: "2"])
+            try fixedObjects1.add(newRecord: [CommentFile.idKey: "1"])
+            try fixedObjects1.add(newRecord: [CommentFile.idKey: "2"])
         } catch {
             XCTFail()
             return
         }
         
-        var fixedObjects2 = ConflictFreeSequence()
+        var fixedObjects2 = CommentFile()
         do {
-            try fixedObjects2.add(newRecord: [ConflictFreeSequence.idKey: "3"])
-            try fixedObjects2.add(newRecord: [ConflictFreeSequence.idKey: "4"])
+            try fixedObjects2.add(newRecord: [CommentFile.idKey: "3"])
+            try fixedObjects2.add(newRecord: [CommentFile.idKey: "4"])
         } catch {
             XCTFail()
             return
@@ -377,7 +377,7 @@ class ConflictFreeSequenceTests: XCTestCase {
     // MARK: Main dictionary contents
     
     func testSetAndGetMainDictionaryElementInt() {
-        var example = ConflictFreeSequence()
+        var example = CommentFile()
         let key = "test"
         let value = 1
         example[key] = value
@@ -388,7 +388,7 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testSetAndGetMainDictionaryElementString() {
-        var example = ConflictFreeSequence()
+        var example = CommentFile()
         let key = "test"
         let value = "Hello World!"
         example[key] = value
@@ -399,7 +399,7 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testSetAndGetMainDictionaryElementIntAndString() {
-        var example = ConflictFreeSequence()
+        var example = CommentFile()
         
         let key1 = "test1"
         let value1 = "Hello World!"
@@ -417,7 +417,7 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testSaveAndLoadMainDictionary() throws {
-        var example = ConflictFreeSequence()
+        var example = CommentFile()
         
         let key1 = "test1"
         let value1 = "Hello World!"
@@ -436,7 +436,7 @@ class ConflictFreeSequenceTests: XCTestCase {
             return
         }
         
-        let fromFile = try ConflictFreeSequence(with: url as URL)
+        let fromFile = try CommentFile(with: url as URL)
         
         guard let result1 = fromFile[key1] as? String, result1 == value1,
             let result2 = fromFile[key2] as? Int, result2 == value2 else {
@@ -446,7 +446,7 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testSaveAndLoadWithMainDictElementsAndFixedObjects() throws {
-        var example = ConflictFreeSequence()
+        var example = CommentFile()
         
         let key1 = "test1"
         let value1 = "Hello World!"
@@ -457,8 +457,8 @@ class ConflictFreeSequenceTests: XCTestCase {
         example[key2] = value2
         
         do {
-            try example.add(newRecord: [ConflictFreeSequence.idKey: "1"])
-            try example.add(newRecord: [ConflictFreeSequence.idKey: "2"])
+            try example.add(newRecord: [CommentFile.idKey: "1"])
+            try example.add(newRecord: [CommentFile.idKey: "2"])
         } catch {
             XCTFail()
             return
@@ -473,7 +473,7 @@ class ConflictFreeSequenceTests: XCTestCase {
             return
         }
         
-        let fromFile = try ConflictFreeSequence(with: url as URL)
+        let fromFile = try CommentFile(with: url as URL)
 
         guard let result1 = fromFile[key1] as? String, result1 == value1 else {
             XCTFail()
@@ -502,7 +502,7 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testMergeWorksWhenThereAreMainDictionaryElements_NonOverlapping() {
-        var example1 = ConflictFreeSequence()
+        var example1 = CommentFile()
         
         let key1 = "test1"
         let value1 = "Hello World!"
@@ -512,7 +512,7 @@ class ConflictFreeSequenceTests: XCTestCase {
         let value2 = 42
         example1[key2] = value2
         
-        var example2 = ConflictFreeSequence()
+        var example2 = CommentFile()
         
         let key3 = "test3"
         let value3 = 98
@@ -533,7 +533,7 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testMergeWorksWhenThereAreMainDictionaryElements_Overlapping() {
-        var example1 = ConflictFreeSequence()
+        var example1 = CommentFile()
         
         let key1 = "test1"
         let value1 = "Hello World!"
@@ -543,7 +543,7 @@ class ConflictFreeSequenceTests: XCTestCase {
         let value2 = 42
         example1[key2] = value2
         
-        var example2 = ConflictFreeSequence()
+        var example2 = CommentFile()
         
         let key3 = "test2"
         let value3 = 98
@@ -564,7 +564,7 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testTwoUnequalFixedObjectsAreNotTheSame1() {
-        var example1 = ConflictFreeSequence()
+        var example1 = CommentFile()
         
         let key1 = "test1"
         let value1 = "Hello World!"
@@ -574,13 +574,13 @@ class ConflictFreeSequenceTests: XCTestCase {
         let value2 = 42
         example1[key2] = value2
         
-        let example2 = ConflictFreeSequence()
+        let example2 = CommentFile()
 
         XCTAssert(example1 != example2)
     }
     
     func testTwoUnequalFixedObjectsAreNotTheSame2() {
-        var example1 = ConflictFreeSequence()
+        var example1 = CommentFile()
         
         let key1 = "test1"
         let value1 = "Hello World!"
@@ -590,7 +590,7 @@ class ConflictFreeSequenceTests: XCTestCase {
         let value2 = 42
         example1[key2] = value2
         
-        var example2 = ConflictFreeSequence()
+        var example2 = CommentFile()
         example2[key1] = "Smarg"
         example2[key2] = value2
 
@@ -598,7 +598,7 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testTwoUnequalFixedObjectsAreNotTheSame3() {
-        var example1 = ConflictFreeSequence()
+        var example1 = CommentFile()
         
         let key1 = "test1"
         let value1 = "Hello World!"
@@ -608,12 +608,12 @@ class ConflictFreeSequenceTests: XCTestCase {
         let value2 = 42
         example1[key2] = value2
         
-        var example2 = ConflictFreeSequence()
+        var example2 = CommentFile()
         example2[key1] = value1
         example2[key2] = value2
         
         do {
-            try example1.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try example1.add(newRecord: [CommentFile.idKey: "1"])
         } catch {
             XCTFail()
             return
@@ -623,7 +623,7 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testTwoUnequalFixedObjectsAreNotTheSame4() {
-        var example1 = ConflictFreeSequence()
+        var example1 = CommentFile()
         
         let key1 = "test1"
         let value1 = "Hello World!"
@@ -633,13 +633,13 @@ class ConflictFreeSequenceTests: XCTestCase {
         let value2 = 42
         example1[key2] = value2
         
-        var example2 = ConflictFreeSequence()
+        var example2 = CommentFile()
         example2[key1] = value1
         example2[key2] = value2
         
         do {
-            try example1.add(newRecord: [ConflictFreeSequence.idKey: "1"])
-            try example2.add(newRecord: [ConflictFreeSequence.idKey: "2"])
+            try example1.add(newRecord: [CommentFile.idKey: "1"])
+            try example2.add(newRecord: [CommentFile.idKey: "2"])
         } catch {
             XCTFail()
             return
@@ -649,7 +649,7 @@ class ConflictFreeSequenceTests: XCTestCase {
     }
     
     func testTwoUnequalFixedObjectsAreTheSame() {
-        var example1 = ConflictFreeSequence()
+        var example1 = CommentFile()
         
         let key1 = "test1"
         let value1 = "Hello World!"
@@ -659,13 +659,13 @@ class ConflictFreeSequenceTests: XCTestCase {
         let value2 = 42
         example1[key2] = value2
         
-        var example2 = ConflictFreeSequence()
+        var example2 = CommentFile()
         example2[key1] = value1
         example2[key2] = value2
         
         do {
-            try example1.add(newRecord: [ConflictFreeSequence.idKey: "1"])
-            try example2.add(newRecord: [ConflictFreeSequence.idKey: "1"])
+            try example1.add(newRecord: [CommentFile.idKey: "1"])
+            try example2.add(newRecord: [CommentFile.idKey: "1"])
         } catch {
             XCTFail()
             return

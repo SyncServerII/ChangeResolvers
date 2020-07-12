@@ -32,8 +32,8 @@ In terms of the members of the FixedObjects structure below, the `mainDictionary
 
 import Foundation
 
-public struct ConflictFreeSequence: Sequence, Equatable, WholeFileReplacer {
-    public var changeResolverType: String = "ConflictFreeSequence"
+public struct CommentFile: Sequence, Equatable, WholeFileReplacer {
+    public var changeResolverName: String = "CommentFile"
     
     enum ConflictFreeSequenceError: Error {
         case noMainDictionary
@@ -136,7 +136,7 @@ public struct ConflictFreeSequence: Sequence, Equatable, WholeFileReplacer {
     
     // The dictionary passed must have a key `id`; the value of that key must be a String, and it must not be the same as any other id for fixed objects added, or obtained through the init `withFile` constructor, previously.
     mutating public func add(newRecord: FixedObject) throws {
-        guard let newId = newRecord[ConflictFreeSequence.idKey] as? String else {
+        guard let newId = newRecord[Self.idKey] as? String else {
             throw Errors.noId
         }
         
@@ -150,8 +150,8 @@ public struct ConflictFreeSequence: Sequence, Equatable, WholeFileReplacer {
     
     // Duplicate FixedObjects are ignored-- they are assumed to be identical. Other keys/values in the main dictionaries are simply assigned into the main dictionary of the result, other first and then self (so self takes priority).
     // The `new` count is with respect to the FixedObjects in self: The number of new objects added in the merge from the other.
-    public func merge(with otherFixedObjects: ConflictFreeSequence) -> (ConflictFreeSequence, new: Int) {
-        var mergedResult = ConflictFreeSequence()
+    public func merge(with otherFixedObjects: Self) -> (Self, new: Int) {
+        var mergedResult = Self()
         
         for fixedObject in self {
             try! mergedResult.add(newRecord: fixedObject)
@@ -159,7 +159,7 @@ public struct ConflictFreeSequence: Sequence, Equatable, WholeFileReplacer {
         
         var new = 0
         for otherFixedObject in otherFixedObjects {
-            let id = otherFixedObject[ConflictFreeSequence.idKey] as! String
+            let id = otherFixedObject[Self.idKey] as! String
             if !mergedResult.ids.contains(id) {
                 try! mergedResult.add(newRecord: otherFixedObject)
                 new += 1
@@ -188,7 +188,7 @@ public struct ConflictFreeSequence: Sequence, Equatable, WholeFileReplacer {
     }
     
     public func getData() throws -> Data {
-        return try ConflictFreeSequence.getData(obj: mainDictionary)
+        return try Self.getData(obj: mainDictionary)
     }
 
     private static func getData(obj: Any) throws -> Data {
@@ -211,7 +211,7 @@ public struct ConflictFreeSequence: Sequence, Equatable, WholeFileReplacer {
     }
     
     // Equality includes ordering of calls to `add`, i.e., ordering of the FixedObjects in the sequence. And contents of the main dictionary.
-    public static func ==(lhs: ConflictFreeSequence, rhs: ConflictFreeSequence) -> Bool {
+    public static func ==(lhs: Self, rhs: Self) -> Bool {
         if lhs.mainDictionary.count != rhs.mainDictionary.count {
             return false
         }
@@ -251,7 +251,7 @@ public struct ConflictFreeSequence: Sequence, Equatable, WholeFileReplacer {
 
 // Weaker equivalency: Just checks to make sure objects have each have the same ids. Doesn't check other contents of the objects in each. Doesn't include other key/values in main dictionary.
 infix operator ~~
-public func ~~(lhs: ConflictFreeSequence, rhs: ConflictFreeSequence) -> Bool {
+public func ~~(lhs: CommentFile, rhs: CommentFile) -> Bool {
     return lhs.ids == rhs.ids
 }
 
