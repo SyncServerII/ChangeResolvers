@@ -11,3 +11,9 @@ public protocol ChangeResolver {
     // This must be unique across all ChangeResolvers registered with the server.
     static var changeResolverName: String { get }
 }
+
+public extension ChangeResolver {
+    static var maxChangeResolverNameLength: Int {
+        return 100
+    }
+}
