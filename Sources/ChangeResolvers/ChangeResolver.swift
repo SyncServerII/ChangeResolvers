@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ChangeResolver.swift
 //  
 //
 //  Created by Christopher G Prince on 7/12/20.
@@ -12,8 +12,6 @@ public protocol ChangeResolver {
     static var changeResolverName: String { get }
 }
 
-public extension ChangeResolver {
-    static var maxChangeResolverNameLength: Int {
-        return 100
-    }
+public enum ChangeResolverConstants {
+    static let maxChangeResolverNameLength = 100
 }
