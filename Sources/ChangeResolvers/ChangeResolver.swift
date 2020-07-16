@@ -13,5 +13,5 @@ public protocol ChangeResolver {
 }
 
 public enum ChangeResolverConstants {
-    static let maxChangeResolverNameLength = 100
+    public static let maxChangeResolverNameLength = 100
 }
