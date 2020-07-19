@@ -31,6 +31,8 @@ In terms of the members of the FixedObjects structure below, the `mainDictionary
 */
 
 import Foundation
+import HeliumLogger
+import LoggerAPI
 
 public struct CommentFile: Sequence, Equatable, WholeFileReplacer {
     public static var changeResolverName: String = "CommentFile"
@@ -123,7 +125,7 @@ public struct CommentFile: Sequence, Equatable, WholeFileReplacer {
     
     enum Errors : Error {
         case noId
-        case idIsNotNew
+        case idIsNotNew(String)
     }
     
     static func convert(data: Data) throws -> FixedObject {
@@ -137,7 +139,17 @@ public struct CommentFile: Sequence, Equatable, WholeFileReplacer {
     // The dictionary passed must have a key `id`; the value of that key must be a String, and it must not be the same as any other id for fixed objects added, or obtained through the init `withFile` constructor, previously.
     mutating public func add(newRecord: Data) throws {
         let newRecord = try Self.convert(data: newRecord)
-        try add(newRecord: newRecord)
+        do {
+            try add(newRecord: newRecord)
+        } catch let error {
+            if let error = error as? Errors, case .idIsNotNew(let id) = error {
+                // Not treating this as an error. See ChangeResolvers requirements in the main library README.md
+                Log.warning("Errors.idIsNotNew: \(id)")
+            }
+            else {
+                throw error
+            }
+        }
     }
     
     mutating func add(newRecord: FixedObject) throws {
@@ -146,7 +158,7 @@ public struct CommentFile: Sequence, Equatable, WholeFileReplacer {
         }
         
         guard !ids.contains(newId) else {
-            throw Errors.idIsNotNew
+            throw Errors.idIsNotNew(newId)
         }
         
         ids.insert(newId)

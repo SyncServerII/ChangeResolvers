@@ -8,6 +8,7 @@ public protocol WholeFileReplacer: ChangeResolver {
     // Reconstitute the file from Data.
     init(with data: Data) throws
     
+    // This must not throw an error due to adding the same record more than once.
     mutating func add(newRecord: Data) throws
     
     // Convert the entire file into a Data object

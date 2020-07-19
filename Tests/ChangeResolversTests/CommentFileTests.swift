@@ -673,5 +673,58 @@ class CommentFileTests: XCTestCase {
 
         XCTAssert(example1 == example2)
     }
+    
+    func testAddDataRecordWorks() throws {
+        var fixedObjects = CommentFile()
+        
+        let messageString1 = "Example"
+        let id1 = Foundation.UUID().uuidString
+        var record1 = CommentFile.FixedObject()
+        record1[CommentFile.idKey] = id1
+        record1["messageString"] = messageString1
+        let updateContents1 = try JSONSerialization.data(withJSONObject: record1)
+        
+        try fixedObjects.add(newRecord: updateContents1)
+
+        guard fixedObjects.count == 1 else {
+            XCTFail()
+            return
+        }
+        
+        guard let record = fixedObjects[0] else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssert(record[CommentFile.idKey] as? String == id1)
+        XCTAssert(record["messageString"] as? String == messageString1)
+    }
+    
+    func testAddSameDataTwiceRecordWorks() throws {
+        var fixedObjects = CommentFile()
+        
+        let messageString1 = "Example"
+        let id1 = Foundation.UUID().uuidString
+        var record1 = CommentFile.FixedObject()
+        record1[CommentFile.idKey] = id1
+        record1["messageString"] = messageString1
+        let updateContents1 = try JSONSerialization.data(withJSONObject: record1)
+        
+        try fixedObjects.add(newRecord: updateContents1)
+        try fixedObjects.add(newRecord: updateContents1)
+
+        guard fixedObjects.count == 1 else {
+            XCTFail()
+            return
+        }
+        
+        guard let record = fixedObjects[0] else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssert(record[CommentFile.idKey] as? String == id1)
+        XCTAssert(record["messageString"] as? String == messageString1)
+    }
 }
 

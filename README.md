@@ -8,3 +8,8 @@ Enables changes to be applied to files, under the following constraints:
 These constraints impose limits on the design you chose for the data structure of the file contents.
 
 Intended for use on both iOS and Server. 
+
+
+TODO: 
+
+1) Need to add versions to change resolvers-- which will also go into the server database. I.e., so we can assess which version of a change resolver the server is compatible with.
