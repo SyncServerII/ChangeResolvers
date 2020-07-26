@@ -12,14 +12,13 @@ let package = Package(
             targets: ["ChangeResolvers"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", .upToNextMajor(from: "1.8.1"))
+        .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", .upToNextMajor(from: "1.8.1")),
+        .package(url: "https://github.com/SyncServerII/ServerAccount.git", .branch("master")),
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "ChangeResolvers",
-            dependencies: ["HeliumLogger"]),
+            dependencies: ["HeliumLogger", "ServerAccount"]),
         .testTarget(
             name: "ChangeResolversTests",
             dependencies: ["ChangeResolvers"]),
