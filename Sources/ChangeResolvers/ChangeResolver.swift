@@ -11,6 +11,8 @@ import ServerShared
 
 public struct ApplyResult {
     public let newFileVersion: FileVersionInt
+    
+    // Check sum for entire new file version. Specifics of the check sum depend on the specific `CloudStorage` in use.
     public let checkSum: String
 }
 
@@ -23,7 +25,7 @@ public protocol ChangeResolver {
     // This must be unique across all ChangeResolvers registered with the server.
     static var changeResolverName: String { get }
     
-    // Apply the change resolver
+    // Apply the change resolver. It is assumed that applying a series of changes to a file at a current file version results in a new version of that file, and that after this call, the prior version should be deleted. (This method does not delete that prior version).
     static func apply(changes: [ChangeResolverContents], toFileUUID fileUUID: String, currentFileVersion: FileVersionInt, deviceUUID: String, cloudStorage: CloudStorage, options: CloudStorageFileNameOptions, completion: ((Swift.Result<ApplyResult, Error>) -> ())?)
 }
 
