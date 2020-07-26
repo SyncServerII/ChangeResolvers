@@ -20,7 +20,7 @@ public enum ChangeResolverConstants {
 
 public protocol ChangeResolverContents {
     // This must *not* be nil.
-    var uploadContents: Data?
+    var uploadContents: Data? { get }
 }
 
 public extension ChangeResolver {
