@@ -12,6 +12,10 @@ import Logging
 
 var logger:Logger?
 
+public func setupLogger(log:Logger) {
+    logger = log
+}
+
 public struct ApplyResult {
     public let newFileVersion: FileVersionInt
     
