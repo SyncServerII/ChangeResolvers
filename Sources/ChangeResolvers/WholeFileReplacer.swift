@@ -2,7 +2,7 @@
 import Foundation
 import ServerAccount
 import ServerShared
-import LoggerAPI
+import Logging
 
 // Enabling the application of changes to a single file. The file must be read in its entirety from storage, some series of changes applied, and then the updates written back to storage. It is called `WholeFileReplacer` due to this mode of full read/full write to make changes. See the `apply` method below in the extension.
 
@@ -35,7 +35,7 @@ public extension WholeFileReplacer {
         
         let currentCloudFileName = Filename.inCloud(deviceUUID:deviceUUID, fileUUID: fileUUID, mimeType:options.mimeType, fileVersion: currentFileVersion)
         
-        Log.debug("downloadFile: \(currentCloudFileName)")
+        logger?.debug("downloadFile: \(currentCloudFileName)")
         cloudStorage.downloadFile(cloudFileName: currentCloudFileName, options: options) { downloadResult in
             guard case .success(data: let fileContents, checkSum: _) = downloadResult else {
                 completion?(.failure(Errors.downloadError(downloadResult)))
@@ -68,7 +68,7 @@ public extension WholeFileReplacer {
             
             let nextCloudFileName = Filename.inCloud(deviceUUID:deviceUUID, fileUUID: fileUUID, mimeType:options.mimeType, fileVersion: nextVersion)
 
-            Log.debug("uploadFile: \(nextCloudFileName)")
+            logger?.debug("uploadFile: \(nextCloudFileName)")
 
             cloudStorage.uploadFile(cloudFileName: nextCloudFileName, data: replacementFileContents, options: options) { uploadResult in
                 guard case .success(let checkSum) = uploadResult else {

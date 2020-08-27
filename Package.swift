@@ -12,13 +12,16 @@ let package = Package(
             targets: ["ChangeResolvers"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", .upToNextMajor(from: "1.8.1")),
         .package(url: "https://github.com/SyncServerII/ServerAccount.git", .branch("master")),
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.4.0")
     ],
     targets: [
         .target(
             name: "ChangeResolvers",
-            dependencies: ["HeliumLogger", "ServerAccount"]),
+            dependencies: [
+                .product(name: "Logging", package: "swift-log"),
+                "ServerAccount"
+            ]),
         .testTarget(
             name: "ChangeResolversTests",
             dependencies: ["ChangeResolvers"]),

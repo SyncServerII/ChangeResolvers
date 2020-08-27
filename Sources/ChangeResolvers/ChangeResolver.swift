@@ -8,6 +8,9 @@
 import Foundation
 import ServerAccount
 import ServerShared
+import Logging
+
+var logger:Logger?
 
 public struct ApplyResult {
     public let newFileVersion: FileVersionInt

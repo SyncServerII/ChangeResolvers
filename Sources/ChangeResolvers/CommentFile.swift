@@ -32,7 +32,7 @@ In terms of the members of the FixedObjects structure below, the `mainDictionary
 
 import Foundation
 import HeliumLogger
-import LoggerAPI
+import Logging
 
 public struct CommentFile: Sequence, Equatable, WholeFileReplacer {
     public static var changeResolverName: String = "CommentFile"
@@ -144,7 +144,7 @@ public struct CommentFile: Sequence, Equatable, WholeFileReplacer {
         } catch let error {
             if let error = error as? Errors, case .idIsNotNew(let id) = error {
                 // Not treating this as an error. See ChangeResolvers requirements in the main library README.md
-                Log.warning("Errors.idIsNotNew: \(id)")
+                logger?.warning("Errors.idIsNotNew: \(id)")
             }
             else {
                 throw error
