@@ -31,7 +31,6 @@ In terms of the members of the FixedObjects structure below, the `mainDictionary
 */
 
 import Foundation
-import HeliumLogger
 import Logging
 
 public struct CommentFile: Sequence, Equatable, WholeFileReplacer {
