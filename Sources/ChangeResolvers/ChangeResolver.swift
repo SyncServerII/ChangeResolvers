@@ -12,6 +12,7 @@ import Logging
 
 var logger:Logger?
 
+// I've got a question on this: https://github.com/apple/swift-log/issues/155 here.
 public func setupLogger(log:Logger) {
     logger = log
 }
