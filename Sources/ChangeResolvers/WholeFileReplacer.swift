@@ -28,6 +28,13 @@ private enum Errors: Swift.Error {
 }
 
 public extension WholeFileReplacer {
+    static func validV0(contents: Data) -> Bool {
+        guard let _ = try? Self.init(with: contents) else {
+            return false
+        }
+        return true
+    }
+    
     static func apply(changes: [ChangeResolverContents], toFileUUID fileUUID: String, currentFileVersion: FileVersionInt, deviceUUID: String, cloudStorage: CloudStorage, options: CloudStorageFileNameOptions, completion: ((Swift.Result<ApplyResult, Error>) -> ())? = nil) {
         
         // We're applying changes and creating the next version of the file

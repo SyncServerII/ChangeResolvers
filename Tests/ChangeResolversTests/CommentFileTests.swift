@@ -17,6 +17,18 @@ class CommentFileTests: XCTestCase {
         super.tearDown()
     }
     
+    func testValidV0WhenV0ValidWorks() throws {
+        let fixedObjects = CommentFile()
+        let data = try fixedObjects.getData()
+        XCTAssert(CommentFile.validV0(contents: data))
+    }
+    
+    func testValidV0WhenV0InvalidFails() throws {
+        let randomishString = "1234roihqwleijhf"
+        let data = randomishString.data(using: .utf8)!
+        XCTAssert(!CommentFile.validV0(contents: data))
+    }
+    
     func testAddNewFixedObjectWorks() {
         var fixedObjects = CommentFile()
         
