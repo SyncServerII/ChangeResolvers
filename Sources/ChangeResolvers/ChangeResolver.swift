@@ -36,7 +36,7 @@ public protocol ChangeResolver {
     // Determine if a v0 upload file contents for the change resolver, to later be downloaded and used to apply changes using the `apply` method is valid.
     static func validV0(contents: Data) -> Bool
     
-    // Apply the change resolver. It is assumed that applying a series of changes to a file at a current file version results in a new version of that file, and that after this call, the prior version should be deleted. (This method does not delete that prior version).
+    // Apply the change resolver. It is assumed that applying a series of changes to a file at a current file version results in a new (+1) version of that file, and that after this call, the prior version should be deleted. (This method does not delete that prior version).
     static func apply(changes: [ChangeResolverContents], toFileUUID fileUUID: String, currentFileVersion: FileVersionInt, deviceUUID: String, cloudStorage: CloudStorage, options: CloudStorageFileNameOptions, completion: ((Swift.Result<ApplyResult, Error>) -> ())?)
 }
 
