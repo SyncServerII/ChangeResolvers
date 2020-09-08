@@ -135,6 +135,22 @@ public struct CommentFile: Sequence, Equatable, WholeFileReplacer {
         return fixedObject
     }
     
+    public static func valid(uploadContents: Data) -> Bool {
+        do {
+            let newRecord = try Self.convert(data: uploadContents)
+            guard let _ = newRecord[Self.idKey] as? String else {
+                throw Errors.noId
+            }
+        }
+        catch let error {
+            logger?.warning("\(error)")
+            return false
+        }
+        
+        return true
+    }
+
+    
     // The dictionary passed must have a key `id`; the value of that key must be a String, and it must not be the same as any other id for fixed objects added, or obtained through the init `withFile` constructor, previously.
     mutating public func add(newRecord: Data) throws {
         let newRecord = try Self.convert(data: newRecord)
@@ -207,7 +223,7 @@ public struct CommentFile: Sequence, Equatable, WholeFileReplacer {
         return try Self.getData(obj: mainDictionary)
     }
 
-    private static func getData(obj: Any) throws -> Data {
+    static func getData(obj: Any) throws -> Data {
         return try JSONSerialization.data(withJSONObject: obj, options: JSONSerialization.WritingOptions(rawValue: 0))
     }
     

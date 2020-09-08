@@ -738,5 +738,35 @@ class CommentFileTests: XCTestCase {
         XCTAssert(record[CommentFile.idKey] as? String == id1)
         XCTAssert(record["messageString"] as? String == messageString1)
     }
+    
+    func testValidUploadContentsWorks() throws {
+        var record1 = CommentFile.FixedObject()
+        
+        let data1 = try CommentFile.getData(obj: record1)
+        
+        // Not valid because the record has no idKey
+        guard !CommentFile.valid(uploadContents: data1) else {
+            XCTFail()
+            return
+        }
+        
+        let id1 = Foundation.UUID().uuidString
+        record1[CommentFile.idKey] = id1
+        let data2 = try CommentFile.getData(obj: record1)
+
+        guard CommentFile.valid(uploadContents: data2) else {
+            XCTFail()
+            return
+        }
+        
+        let messageString1 = "Example"
+        record1["messageString"] = messageString1
+        let data3 = try CommentFile.getData(obj: record1)
+
+        guard CommentFile.valid(uploadContents: data3) else {
+            XCTFail()
+            return
+        }
+    }
 }
 
