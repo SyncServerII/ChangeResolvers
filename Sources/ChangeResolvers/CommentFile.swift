@@ -167,7 +167,7 @@ public struct CommentFile: Sequence, Equatable, WholeFileReplacer {
         }
     }
     
-    mutating func add(newRecord: FixedObject) throws {
+    mutating public func add(newRecord: FixedObject) throws {
         guard let newId = newRecord[Self.idKey] as? String else {
             throw Errors.noId
         }
