@@ -12,7 +12,7 @@ let package = Package(
             targets: ["ChangeResolvers"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/SyncServerII/ServerAccount.git", .branch("master")),
+        .package(url: "https://github.com/SyncServerII/ServerAccount.git", from: "0.0.8"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.4.0")
     ],
     targets: [

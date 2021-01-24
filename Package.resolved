@@ -104,18 +104,18 @@
         "package": "ServerAccount",
         "repositoryURL": "https://github.com/SyncServerII/ServerAccount.git",
         "state": {
-          "branch": "master",
-          "revision": "ba6597bc99aac8dfec283c4f74534dd89f268685",
-          "version": null
+          "branch": null,
+          "revision": "8dc5b24eb55f97c90bc989fac746302be53a1a0d",
+          "version": "0.0.8"
         }
       },
       {
         "package": "ServerShared",
         "repositoryURL": "https://github.com/SyncServerII/ServerShared.git",
         "state": {
-          "branch": "master",
-          "revision": "92b304d9051754fe652524bd6bedda0a60ac05a9",
-          "version": null
+          "branch": null,
+          "revision": "6c725c50cdb575c183943dcfcdb7394390a5e933",
+          "version": "0.0.4"
         }
       },
       {
