@@ -22,6 +22,7 @@ private enum Errors: Swift.Error {
     case downloadError(DownloadResult)
     case failedInitializing
     case noContentsForChange
+    case noChanges
     case failedAddingChange(Swift.Error)
     case failedGettingReplacerData
     case failedUploadingNewFileVersion
@@ -36,6 +37,11 @@ public extension WholeFileReplacer {
     }
     
     static func apply(changes: [ChangeResolverContents], toFileUUID fileUUID: String, currentFileVersion: FileVersionInt, deviceUUID: String, cloudStorage: CloudStorage, options: CloudStorageFileNameOptions, completion: ((Swift.Result<ApplyResult, Error>) -> ())? = nil) {
+    
+        guard changes.count > 0 else {
+            completion?(.failure(Errors.noChanges))
+            return
+        }
         
         // We're applying changes and creating the next version of the file
         let nextVersion = currentFileVersion + 1
