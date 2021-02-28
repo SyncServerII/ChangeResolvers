@@ -1,5 +1,8 @@
 ChangeResolvers
 	
+Version 0.1.0 (2/27/21)
+	Add error handling check.
+	
 Version 0.0.2 (1/23/21)
     Fix package manifest issue.
     
