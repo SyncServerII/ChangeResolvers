@@ -108,6 +108,45 @@ class MediaItemAttributesTests: XCTestCase {
         XCTFail()
     }
     
+    // The `add` for unread counts actually has a `max` rather than replacing effect.
+    func testSuccessiveUnreadCountAdd_smallestFirst() throws {
+        let mia = MediaItemAttributes()
+        
+        let keyValue: KeyValue = .unreadCount(userId: "Foo", unreadCount: 20)
+        try mia.add(keyValue: keyValue)
+        
+        let keyValue2: KeyValue = .unreadCount(userId: "Foo", unreadCount: 81)
+        try mia.add(keyValue: keyValue2)
+        
+        let keyValueResult = mia.get(type: .unreadCount, key: "Foo")
+        
+        switch keyValueResult {
+        case .unreadCount(userId: "Foo", unreadCount: let unreadCount):
+            XCTAssert(unreadCount == 81, "\(String(describing: unreadCount))")
+        default:
+            XCTFail()
+        }
+    }
+    
+    func testSuccessiveUnreadCountAdd_smallestSecond() throws {
+        let mia = MediaItemAttributes()
+        
+        let keyValue: KeyValue = .unreadCount(userId: "Foo", unreadCount: 81)
+        try mia.add(keyValue: keyValue)
+        
+        let keyValue2: KeyValue = .unreadCount(userId: "Foo", unreadCount: 20)
+        try mia.add(keyValue: keyValue2)
+        
+        let keyValueResult = mia.get(type: .unreadCount, key: "Foo")
+        
+        switch keyValueResult {
+        case .unreadCount(userId: "Foo", unreadCount: let unreadCount):
+            XCTAssert(unreadCount == 81, "\(String(describing: unreadCount))")
+        default:
+            XCTFail()
+        }
+    }
+    
     func testAddKeyValue_keyword_nonNilCode() throws {
         let mia = MediaItemAttributes()
         let keyValue: KeyValue = .keyword("Foo", used: true)
