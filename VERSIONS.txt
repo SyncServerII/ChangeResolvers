@@ -1,5 +1,8 @@
 ChangeResolvers
 	
+Version 0.2.0 (5/31/21)
+    Added `MediaItemAttributes` -- a new change resolver.
+
 Version 0.1.0 (2/27/21)
 	Add error handling check.
 	
