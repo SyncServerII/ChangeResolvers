@@ -224,4 +224,19 @@ class MediaItemAttributesTests: XCTestCase {
     func testValidFalse() {
         XCTAssert(!MediaItemAttributes.valid(uploadContents: Data()))
     }
+    
+    func testEmptyFile() throws {
+        let data = try MediaItemAttributes.emptyFile()
+        let decoder = JSONDecoder()
+        let mia = try decoder.decode(MediaItemAttributes.self, from: data)
+        
+        let result = mia.get(type: .badge, key: "Foo")
+        switch result {
+        case .badge(userId: let userId, code: let code):
+            XCTAssert(userId == "Foo")
+            XCTAssert(code == nil)
+        default:
+            XCTFail()
+        }
+    }
 }

@@ -161,6 +161,13 @@ public class MediaItemAttributes: WholeFileReplacer, Codable {
     init() {
     }
     
+    // Write the data returned from this for an empty file.
+    public static func emptyFile() throws -> Data {
+        let coder = JSONEncoder()
+        let mia = MediaItemAttributes()
+        return try coder.encode(mia)
+    }
+    
     // Convenience for encoding
     public static func encode(keyValue: KeyValue) throws -> Data {
         let encoder = JSONEncoder()

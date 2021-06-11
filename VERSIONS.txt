@@ -1,5 +1,8 @@
 ChangeResolvers
 	
+Version 0.2.1 (6/10/21)
+    Added emptyFile method -- to create empty file data for MediaItemAttributes.
+    
 Version 0.2.0 (5/31/21)
     Added `MediaItemAttributes` -- a new change resolver.
 
