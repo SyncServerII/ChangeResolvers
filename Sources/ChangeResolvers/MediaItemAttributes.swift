@@ -11,19 +11,19 @@
 import Foundation
  
 public enum KeyType {
-    case unreadCount
+    case readCount
     case keyword
     case badge
 }
  
 // Each case here must correspond to one KeyType case
 public enum KeyValue: Codable, Equatable {
-    case unreadCount(userId: String, unreadCount: Int?)
+    case readCount(userId: String, readCount: Int?)
     case keyword(String, used:Bool?)
     case badge(userId: String, code: String?)
     
     enum CodingKeys: CodingKey {
-        case unreadCount, keyword, badge
+        case readCount, keyword, badge
     }
     
     public init(from decoder: Decoder) throws {
@@ -31,11 +31,11 @@ public enum KeyValue: Codable, Equatable {
         let key = container.allKeys.first
         
         switch key {
-        case .unreadCount:
-            var nestedContainer = try container.nestedUnkeyedContainer(forKey: .unreadCount)
+        case .readCount:
+            var nestedContainer = try container.nestedUnkeyedContainer(forKey: .readCount)
             let userId = try nestedContainer.decode(String.self)
-            let unreadCount = try nestedContainer.decode(Int?.self)
-            self = .unreadCount(userId: userId, unreadCount: unreadCount)
+            let readCount = try nestedContainer.decode(Int?.self)
+            self = .readCount(userId: userId, readCount: readCount)
             
         case .keyword:
             var nestedContainer = try container.nestedUnkeyedContainer(forKey: .keyword)
@@ -63,10 +63,10 @@ public enum KeyValue: Codable, Equatable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         switch self {
-        case .unreadCount(userId: let userId, unreadCount: let unreadCount):
-            var nestedContainer = container.nestedUnkeyedContainer(forKey: .unreadCount)
+        case .readCount(userId: let userId, readCount: let readCount):
+            var nestedContainer = container.nestedUnkeyedContainer(forKey: .readCount)
             try nestedContainer.encode(userId)
-            try nestedContainer.encode(unreadCount)
+            try nestedContainer.encode(readCount)
         case .keyword(let keyword, used: let used):
             var nestedContainer = container.nestedUnkeyedContainer(forKey: .keyword)
             try nestedContainer.encode(keyword)
@@ -91,7 +91,7 @@ class KeyValues<KEY: Hashable & Codable, VALUE: Codable>: Codable {
     }
 }
 
-class UnreadCounts: KeyValues<String, Int> {
+class ReadCounts: KeyValues<String, Int> {
     // For UnreadCounts we don't want just a simple replace last value strategy.
     // Instead, I want: The maximum of two (same) userId keys should be used. I.e., the maximum across the current and last value for the same UserId.
     // See https://github.com/SyncServerII/Neebla/issues/15#issuecomment-850734982
@@ -108,8 +108,8 @@ class UnreadCounts: KeyValues<String, Int> {
 public class MediaItemAttributes: WholeFileReplacer, Codable {
     public static var changeResolverName: String = "MediaItemAttributes"
     
-    // Key: userId; Value: unreadCount
-    var unreadCounts = UnreadCounts()
+    // Key: userId; Value: readCount
+    var readCounts = ReadCounts()
     
     // Key: Keyword; Value: used/unused
     var keywords = KeyValues<String, Bool>()
@@ -120,7 +120,7 @@ public class MediaItemAttributes: WholeFileReplacer, Codable {
     public required init(with data: Data) throws {
         let decoder = JSONDecoder()
         let selfObject = try decoder.decode(Self.self, from: data)
-        unreadCounts = selfObject.unreadCounts
+        readCounts = selfObject.readCounts
         keywords = selfObject.keywords
         badges = selfObject.badges
     }
@@ -177,11 +177,11 @@ public class MediaItemAttributes: WholeFileReplacer, Codable {
     // The value in the KeyValue cannot be nil.
     public func add(keyValue: KeyValue) throws {
         switch keyValue {
-        case .unreadCount(userId: let userId, unreadCount: let unreadCount):
-            guard let unreadCount = unreadCount else {
+        case .readCount(userId: let userId, readCount: let readCount):
+            guard let readCount = readCount else {
                 throw MediaItemAttributesError.nilValue
             }
-            self.unreadCounts.add(key: userId, value: unreadCount)
+            self.readCounts.add(key: userId, value: readCount)
             
         case .keyword(let keyword, used: let used):
             guard let used = used else {
@@ -199,9 +199,9 @@ public class MediaItemAttributes: WholeFileReplacer, Codable {
     
     public func get(type: KeyType, key: String) -> KeyValue {
         switch type {
-        case .unreadCount:
-            let value = self.unreadCounts.get(key: key)
-            return .unreadCount(userId: key, unreadCount: value)
+        case .readCount:
+            let value = self.readCounts.get(key: key)
+            return .readCount(userId: key, readCount: value)
             
         case .keyword:
             let value = self.keywords.get(key: key)

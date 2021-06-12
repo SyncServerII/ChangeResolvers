@@ -41,12 +41,12 @@ class MediaItemAttributesTests: XCTestCase {
         let decoder = JSONDecoder()
         var data: Data!
         
-        let keyValue1 = KeyValue.unreadCount(userId: "Foo", unreadCount: 100)
+        let keyValue1 = KeyValue.readCount(userId: "Foo", readCount: 100)
         data = try encoder.encode(keyValue1)
         let keyValue1Decoded = try decoder.decode(KeyValue.self, from: data)
         XCTAssert(keyValue1 == keyValue1Decoded)
         
-        let keyValue2 = KeyValue.unreadCount(userId: "Foo", unreadCount: nil)
+        let keyValue2 = KeyValue.readCount(userId: "Foo", readCount: nil)
         data = try encoder.encode(keyValue2)
         let keyValue2Decoded = try decoder.decode(KeyValue.self, from: data)
         XCTAssert(keyValue2 == keyValue2Decoded)
@@ -91,15 +91,15 @@ class MediaItemAttributesTests: XCTestCase {
     
     func testAddKeyValue_unreadCount_nonNilCode() throws {
         let mia = MediaItemAttributes()
-        let keyValue: KeyValue = .unreadCount(userId: "Foo", unreadCount: 20)
+        let keyValue: KeyValue = .readCount(userId: "Foo", readCount: 20)
         try mia.add(keyValue: keyValue)
-        let keyValueResult = mia.get(type: .unreadCount, key: "Foo")
+        let keyValueResult = mia.get(type: .readCount, key: "Foo")
         XCTAssert(keyValue == keyValueResult)
     }
     
     func testAddKeyValue_unreadCount_nilCode() throws {
         let mia = MediaItemAttributes()
-        let keyValue: KeyValue = .unreadCount(userId: "Foo", unreadCount: nil)
+        let keyValue: KeyValue = .readCount(userId: "Foo", readCount: nil)
         do {
             try mia.add(keyValue: keyValue)
         } catch {
@@ -112,17 +112,17 @@ class MediaItemAttributesTests: XCTestCase {
     func testSuccessiveUnreadCountAdd_smallestFirst() throws {
         let mia = MediaItemAttributes()
         
-        let keyValue: KeyValue = .unreadCount(userId: "Foo", unreadCount: 20)
+        let keyValue: KeyValue = .readCount(userId: "Foo", readCount: 20)
         try mia.add(keyValue: keyValue)
         
-        let keyValue2: KeyValue = .unreadCount(userId: "Foo", unreadCount: 81)
+        let keyValue2: KeyValue = .readCount(userId: "Foo", readCount: 81)
         try mia.add(keyValue: keyValue2)
         
-        let keyValueResult = mia.get(type: .unreadCount, key: "Foo")
+        let keyValueResult = mia.get(type: .readCount, key: "Foo")
         
         switch keyValueResult {
-        case .unreadCount(userId: "Foo", unreadCount: let unreadCount):
-            XCTAssert(unreadCount == 81, "\(String(describing: unreadCount))")
+        case .readCount(userId: "Foo", readCount: let readCount):
+            XCTAssert(readCount == 81, "\(String(describing: readCount))")
         default:
             XCTFail()
         }
@@ -131,17 +131,17 @@ class MediaItemAttributesTests: XCTestCase {
     func testSuccessiveUnreadCountAdd_smallestSecond() throws {
         let mia = MediaItemAttributes()
         
-        let keyValue: KeyValue = .unreadCount(userId: "Foo", unreadCount: 81)
+        let keyValue: KeyValue = .readCount(userId: "Foo", readCount: 81)
         try mia.add(keyValue: keyValue)
         
-        let keyValue2: KeyValue = .unreadCount(userId: "Foo", unreadCount: 20)
+        let keyValue2: KeyValue = .readCount(userId: "Foo", readCount: 20)
         try mia.add(keyValue: keyValue2)
         
-        let keyValueResult = mia.get(type: .unreadCount, key: "Foo")
+        let keyValueResult = mia.get(type: .readCount, key: "Foo")
         
         switch keyValueResult {
-        case .unreadCount(userId: "Foo", unreadCount: let unreadCount):
-            XCTAssert(unreadCount == 81, "\(String(describing: unreadCount))")
+        case .readCount(userId: "Foo", readCount: let readCount):
+            XCTAssert(readCount == 81, "\(String(describing: readCount))")
         default:
             XCTFail()
         }
@@ -181,7 +181,7 @@ class MediaItemAttributesTests: XCTestCase {
     
     func testAddNewRecord_unreadCount() throws {
         let coder = JSONEncoder()
-        let keyValue: KeyValue = .unreadCount(userId: "Foo", unreadCount: 208)
+        let keyValue: KeyValue = .readCount(userId: "Foo", readCount: 208)
         let data = try coder.encode(keyValue)
         
         let mia = MediaItemAttributes()
