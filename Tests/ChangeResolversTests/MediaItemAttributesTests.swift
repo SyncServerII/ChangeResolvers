@@ -17,6 +17,32 @@ class MediaItemAttributesTests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
+    
+    func testEmptyFile() throws {
+        let data = try MediaItemAttributes.emptyFile()
+        let decoder = JSONDecoder()
+        let mia = try decoder.decode(MediaItemAttributes.self, from: data)
+        
+        let result = mia.get(type: .badge, key: "Foo")
+        switch result {
+        case .badge(userId: let userId, code: let code):
+            XCTAssert(userId == "Foo")
+            XCTAssert(code == nil)
+        default:
+            XCTFail()
+        }
+    }
+    
+    func testValidV0WhenV0ValidWorks() throws {
+        let data = try MediaItemAttributes.emptyFile()
+        XCTAssert(MediaItemAttributes.validV0(contents: data))
+    }
+    
+    func testValidV0WhenV0InvalidFails() throws {
+        let randomishString = "1234roihqwleijhf"
+        let data = randomishString.data(using: .utf8)!
+        XCTAssert(!MediaItemAttributes.validV0(contents: data))
+    }
 
     // MARK: Test KeyValue coding.
     
@@ -36,7 +62,7 @@ class MediaItemAttributesTests: XCTestCase {
         XCTAssert(keyValue2 == keyValue2Decoded)
     }
     
-    func testKeyValueCoding_unreadCount() throws {
+    func testKeyValueCoding_readCount() throws {
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
         var data: Data!
@@ -223,20 +249,5 @@ class MediaItemAttributesTests: XCTestCase {
     
     func testValidFalse() {
         XCTAssert(!MediaItemAttributes.valid(uploadContents: Data()))
-    }
-    
-    func testEmptyFile() throws {
-        let data = try MediaItemAttributes.emptyFile()
-        let decoder = JSONDecoder()
-        let mia = try decoder.decode(MediaItemAttributes.self, from: data)
-        
-        let result = mia.get(type: .badge, key: "Foo")
-        switch result {
-        case .badge(userId: let userId, code: let code):
-            XCTAssert(userId == "Foo")
-            XCTAssert(code == nil)
-        default:
-            XCTFail()
-        }
     }
 }
