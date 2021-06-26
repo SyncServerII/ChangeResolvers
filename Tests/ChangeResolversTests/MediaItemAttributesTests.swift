@@ -250,4 +250,54 @@ class MediaItemAttributesTests: XCTestCase {
     func testValidFalse() {
         XCTAssert(!MediaItemAttributes.valid(uploadContents: Data()))
     }
+    
+    func testBadgeUserIdKeys_emptyMia() {
+        let mia = MediaItemAttributes()
+        let keys = mia.badgeUserIdKeys()
+        XCTAssert(keys.count == 0)
+    }
+    
+    func testBadgeUserIdKeys_decodedEmptyMia() throws {
+        let data = try MediaItemAttributes.emptyFile()
+        let decoder = JSONDecoder()
+        let mia = try decoder.decode(MediaItemAttributes.self, from: data)
+        let keys = mia.badgeUserIdKeys()
+        XCTAssert(keys.count == 0)
+    }
+    
+    func testBadgeUserIdKeys_oneUserId() throws {
+        let userId = "Foo"
+        let mia = MediaItemAttributes()
+        let keyValue: KeyValue = .badge(userId: userId, code: "Bar")
+        try mia.add(keyValue: keyValue)
+        
+        let keys = mia.badgeUserIdKeys()
+        guard keys.count == 1 else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssert(keys.first == userId)
+    }
+    
+    func testBadgeUserIdKeys_twoUserIds() throws {
+        let userId1 = "Fido"
+        let userId2 = "Bido"
+
+        let mia = MediaItemAttributes()
+        
+        let keyValue1: KeyValue = .badge(userId: userId1, code: "Bar")
+        try mia.add(keyValue: keyValue1)
+        let keyValue2: KeyValue = .badge(userId: userId2, code: "Baz")
+        try mia.add(keyValue: keyValue2)
+        
+        let keys = mia.badgeUserIdKeys()
+        guard keys.count == 2 else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssert(keys.contains(userId1))
+        XCTAssert(keys.contains(userId2))
+    }
 }

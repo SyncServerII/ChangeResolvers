@@ -212,4 +212,9 @@ public class MediaItemAttributes: WholeFileReplacer, Codable {
             return .badge(userId: key, code: value)
         }
     }
+    
+    // Get all userId key's for badges. Client can then retrieve the values for each key.
+    public func badgeUserIdKeys() -> Set<String> {
+        Set<String>(badges.contents.keys)
+    }
 }
