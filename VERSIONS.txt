@@ -1,5 +1,8 @@
 ChangeResolvers
-	
+
+Version 0.2.4 (6/27/21)
+    Added getKeywords method to MediaItemAttributes.
+    
 Version 0.2.3 (6/25/21)
     Added badgeUserIdKeys method to MediaItemAttributes.
 

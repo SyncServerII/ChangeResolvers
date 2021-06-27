@@ -192,6 +192,55 @@ class MediaItemAttributesTests: XCTestCase {
         XCTFail()
     }
     
+    func testGetKeywords_empty() throws {
+        let mia = MediaItemAttributes()
+        let result = mia.getKeywords()
+        XCTAssert(result.count == 0)
+    }
+    
+    func testGetKeywords_nonEmpty() throws {
+        let mia = MediaItemAttributes()
+        let keyword = "Foo"
+        let keyValue: KeyValue = .keyword(keyword, used: true)
+        try mia.add(keyValue: keyValue)
+        
+        let result = mia.getKeywords()
+        guard result.count == 1 else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssert(result.first == keyword)
+    }
+    
+    func testGetKeywords_onlyUsed() throws {
+        let mia = MediaItemAttributes()
+        
+        let keyword1 = "Foo"
+        let keyValue1: KeyValue = .keyword(keyword1, used: false)
+        try mia.add(keyValue: keyValue1)
+
+        let keyword2 = "Bar"
+        let keyValue2: KeyValue = .keyword(keyword2, used: true)
+        try mia.add(keyValue: keyValue2)
+        
+        let result1 = mia.getKeywords()
+        guard result1.count == 1 else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssert(result1.first == keyword2)
+        
+        let result2 = mia.getKeywords(onlyThoseUsed: false)
+        guard result2.count == 2 else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssert(result2 == Set<String>([keyword1, keyword2]))
+    }
+    
     func testAddNewRecord_badge() throws {
         let coder = JSONEncoder()
         let keyValue: KeyValue = .badge(userId: "Foo", code: "20")

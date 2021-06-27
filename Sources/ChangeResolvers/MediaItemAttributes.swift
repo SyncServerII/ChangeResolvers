@@ -217,4 +217,15 @@ public class MediaItemAttributes: WholeFileReplacer, Codable {
     public func badgeUserIdKeys() -> Set<String> {
         Set<String>(badges.contents.keys)
     }
+    
+    // If `onlyThoseUsed` is true, then only those keywords in active use (with get result `true`) are returned. Otherwise, all keywords are returned.
+    public func getKeywords(onlyThoseUsed: Bool = true) -> Set<String> {
+        let keywords = self.keywords.contents.keys
+        if onlyThoseUsed {
+            return Set<String>(keywords.filter { keyword in
+                self.keywords.get(key: keyword) ?? false
+            })
+        }
+        return Set<String>(keywords)
+    }
 }
