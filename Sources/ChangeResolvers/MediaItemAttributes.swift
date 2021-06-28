@@ -125,6 +125,12 @@ public class MediaItemAttributes: WholeFileReplacer, Codable {
         badges = selfObject.badges
     }
     
+    // Saves current media item attributes, in JSON format, to the file.
+    public func save(toFile localURL: URL) throws {
+        let data = try getData()
+        try data.write(to: localURL)
+    }
+    
     // a `newRecord` must be an encoded `KeyValue`
     public func add(newRecord: Data) throws {
         let decoder = JSONDecoder()
