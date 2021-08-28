@@ -25,7 +25,7 @@ private enum Errors: Swift.Error {
     case noChanges
     case failedAddingChange(Swift.Error)
     case failedGettingReplacerData
-    case failedUploadingNewFileVersion
+    case failedUploadingNewFileVersion(message: String?)
 }
 
 public extension WholeFileReplacer {
@@ -85,7 +85,8 @@ public extension WholeFileReplacer {
 
             cloudStorage.uploadFile(cloudFileName: nextCloudFileName, data: replacementFileContents, options: options) { uploadResult in
                 guard case .success(let checkSum) = uploadResult else {
-                    completion?(.failure(Errors.failedUploadingNewFileVersion))
+                    let string = String(data: replacementFileContents, encoding: .utf8)
+                    completion?(.failure(Errors.failedUploadingNewFileVersion(message: "new contents: \(String(describing: string)); uploadResult: \(uploadResult)")))
                     return
                 }
                 

@@ -1,5 +1,8 @@
 ChangeResolvers
 
+Version 0.3.2 (8/28/21)
+    Server still broken. Adding debugging output.
+    
 Version 0.3.1 (8/28/21)
     Allowing `notNew` key to be nil in MediaItemAttributes for backwards compatibility. I broke the server with that last update!
     

@@ -486,7 +486,7 @@ class MediaItemAttributesTests: XCTestCase {
         mia.notNew = nil
         
         let data = try encoder.encode(mia)
-        
+                
         let decoder = JSONDecoder()
         let decodedMia = try decoder.decode(MediaItemAttributes.self, from: data)
         XCTAssert(decodedMia.notNew == nil)
@@ -515,5 +515,17 @@ class MediaItemAttributesTests: XCTestCase {
         default:
             XCTFail()
         }
+    }
+    
+    func testAddNotNewRecord_withNilNotNew() throws {
+        let coder = JSONEncoder()
+        let keyValue: KeyValue = .notNew(userId: "Foo", used: true)
+        let data = try coder.encode(keyValue)
+        
+        let mia = MediaItemAttributes()
+        mia.notNew = nil
+        try mia.add(newRecord: data)
+        
+        XCTAssert(mia.notNew != nil)
     }
 }
