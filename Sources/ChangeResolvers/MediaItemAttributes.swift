@@ -136,7 +136,8 @@ public class MediaItemAttributes: WholeFileReplacer, Codable {
     var badges = KeyValues<String, String>()
     
     // Key: userId; Value: true/false (true iff the key is actually found)
-    var notNew = KeyValues<String, Bool>()
+    // Allowing this to be nil so that decoding doesn't fail with older files that don't have this key.
+    var notNew:KeyValues<String, Bool>? = KeyValues<String, Bool>()
     
     public required init(with data: Data) throws {
         let decoder = JSONDecoder()
@@ -226,7 +227,10 @@ public class MediaItemAttributes: WholeFileReplacer, Codable {
             guard let used = used else {
                 throw MediaItemAttributesError.nilValue
             }
-            self.notNew.add(key: userId, value: used)
+            if self.notNew == nil {
+                self.notNew = KeyValues<String, Bool>()
+            }
+            self.notNew?.add(key: userId, value: used)
         }
     }
     
@@ -245,8 +249,13 @@ public class MediaItemAttributes: WholeFileReplacer, Codable {
             return .badge(userId: key, code: value)
 
         case .notNew:
-            let value = self.notNew.get(key: key)
-            return .notNew(userId: key, used: value)
+            if let notNew = self.notNew {
+                let value = notNew.get(key: key)
+                return .notNew(userId: key, used: value)
+            }
+            else {
+                return .notNew(userId: key, used: nil)
+            }
         }
     }
     
@@ -257,7 +266,10 @@ public class MediaItemAttributes: WholeFileReplacer, Codable {
 
     // Get all userId key's for `notNew`. Client can then retrieve the values for each key.
     public func notNewUserIdKeys() -> Set<String> {
-        Set<String>(notNew.contents.keys)
+        guard let notNew = notNew else {
+            return []
+        }
+        return Set<String>(notNew.contents.keys)
     }
     
     // If `onlyThoseUsed` is true, then only those keywords in active use (with get result `true`) are returned. Otherwise, all keywords are returned.

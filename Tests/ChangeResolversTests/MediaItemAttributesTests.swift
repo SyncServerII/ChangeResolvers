@@ -477,4 +477,43 @@ class MediaItemAttributesTests: XCTestCase {
         let keys = mia.notNewUserIdKeys()
         XCTAssert(keys.count == 0)
     }
+    
+    // Test encoding and decoding when original data didn't have the `notNew`.
+    func testEncodeAndDecodeMediaItemAttributes_withNilNotNew() throws {
+        let encoder = JSONEncoder()
+        
+        let mia = MediaItemAttributes()
+        mia.notNew = nil
+        
+        let data = try encoder.encode(mia)
+        
+        let decoder = JSONDecoder()
+        let decodedMia = try decoder.decode(MediaItemAttributes.self, from: data)
+        XCTAssert(decodedMia.notNew == nil)
+    }
+    
+    func testEncodeWithNilMiaAndSomeOtherKey() throws {
+        let encoder = JSONEncoder()
+        
+        let mia = MediaItemAttributes()
+        mia.notNew = nil
+        
+        let keyValue1: KeyValue = .badge(userId: "Foo", code: "Bar")
+        try mia.add(keyValue: keyValue1)
+        
+        let data = try encoder.encode(mia)
+        
+        let decoder = JSONDecoder()
+        let decodedMia = try decoder.decode(MediaItemAttributes.self, from: data)
+        XCTAssert(decodedMia.notNew == nil)
+        
+        let getResult = decodedMia.get(type: .badge, key: "Foo")
+        switch getResult {
+        case .badge(userId: let userId, code: let code):
+            XCTAssert(userId == "Foo")
+            XCTAssert(code == "Bar")
+        default:
+            XCTFail()
+        }
+    }
 }
