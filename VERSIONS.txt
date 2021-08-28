@@ -1,5 +1,8 @@
 ChangeResolvers
 
+Version 0.3.3 (8/28/21)
+    Server still broken. Trying to fix.
+    
 Version 0.3.2 (8/28/21)
     Server still broken. Adding debugging output.
     

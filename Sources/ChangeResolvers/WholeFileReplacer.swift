@@ -84,14 +84,28 @@ public extension WholeFileReplacer {
             logger?.debug("uploadFile: \(nextCloudFileName)")
 
             cloudStorage.uploadFile(cloudFileName: nextCloudFileName, data: replacementFileContents, options: options) { uploadResult in
-                guard case .success(let checkSum) = uploadResult else {
-                    let string = String(data: replacementFileContents, encoding: .utf8)
-                    completion?(.failure(Errors.failedUploadingNewFileVersion(message: "new contents: \(String(describing: string)); uploadResult: \(uploadResult)")))
-                    return
-                }
+                // 8/28/21: Running into a failure case where I'm getting `ServerAccount.CloudStorageError.alreadyUploaded` here. I'm going to handle this by: a) deleting the file, b) reporting a failure, and c) letting a retry happen. Doing it this way because I need the checksum.
                 
-                let result = ApplyResult(newFileVersion: nextVersion, checkSum: checkSum)
-                completion?(.success(result))
+                switch uploadResult {
+                case .success(let checkSum):
+                    let result = ApplyResult(newFileVersion: nextVersion, checkSum: checkSum)
+                    completion?(.success(result))
+                    
+                case .failure(let error):
+                    guard let error = error as? ServerAccount.CloudStorageError,
+                        error == .alreadyUploaded else {
+                        let string = String(data: replacementFileContents, encoding: .utf8)
+                        completion?(.failure(Errors.failedUploadingNewFileVersion(message: "new contents: \(String(describing: string)); uploadResult: \(uploadResult); error: \(error)")))
+                        return
+                    }
+                    
+                    cloudStorage.deleteFile(cloudFileName: nextCloudFileName, options: options) { deletionResult in
+                        completion?(.failure(Errors.failedUploadingNewFileVersion(message: "uploadResult: \(uploadResult); error: \(error): deletionResult: \(deletionResult)")))
+                    }
+                    
+                case .accessTokenRevokedOrExpired:
+                    completion?(.failure(Errors.failedUploadingNewFileVersion(message: "accessTokenRevokedOrExpired")))
+                }
             }
         }
     }
