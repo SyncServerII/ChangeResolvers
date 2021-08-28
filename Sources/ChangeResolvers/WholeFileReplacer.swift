@@ -92,8 +92,8 @@ public extension WholeFileReplacer {
                     completion?(.success(result))
                     
                 case .failure(let error):
-                    guard let error = error as? ServerAccount.CloudStorageError,
-                        error == .alreadyUploaded else {
+                    guard let serverAccountError = error as? ServerAccount.CloudStorageError,
+                        serverAccountError == .alreadyUploaded else {
                         let string = String(data: replacementFileContents, encoding: .utf8)
                         completion?(.failure(Errors.failedUploadingNewFileVersion(message: "new contents: \(String(describing: string)); uploadResult: \(uploadResult); error: \(error)")))
                         return
