@@ -1,5 +1,8 @@
 ChangeResolvers
 
+Version 0.3.0 (8/28/21)
+    Adding support for "NotNew" in MediaItemAttributes.
+
 Version 0.2.5 (6/27/21)
     Added save(toFile: ...) to MediaItemAttributes.
     

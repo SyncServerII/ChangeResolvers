@@ -349,4 +349,132 @@ class MediaItemAttributesTests: XCTestCase {
         XCTAssert(keys.contains(userId1))
         XCTAssert(keys.contains(userId2))
     }
+    
+    // MARK: `notNew`
+
+    func testKeyValueCoding_notNew() throws {
+        let encoder = JSONEncoder()
+        let decoder = JSONDecoder()
+        var data: Data!
+        
+        let keyValue1 = KeyValue.notNew(userId: "Key1", used: true)
+        data = try encoder.encode(keyValue1)
+        let keyValue1Decoded = try decoder.decode(KeyValue.self, from: data)
+        XCTAssert(keyValue1 == keyValue1Decoded)
+        
+        let keyValue2 = KeyValue.notNew(userId: "Key1", used: nil)
+        data = try encoder.encode(keyValue2)
+        let keyValue2Decoded = try decoder.decode(KeyValue.self, from: data)
+        XCTAssert(keyValue2 == keyValue2Decoded)
+    }
+    
+    func testAddKeyValue_notNew_nonUsedTrue() throws {
+        let mia = MediaItemAttributes()
+        let keyValue: KeyValue = .notNew(userId: "Foo", used: true)
+        try mia.add(keyValue: keyValue)
+        let keyValueResult = mia.get(type: .notNew, key: "Foo")
+        XCTAssert(keyValue == keyValueResult)
+        switch keyValueResult {
+        case .notNew(userId: let userId, used: let used):
+            XCTAssert(userId == "Foo")
+            XCTAssert(used == true)
+        default:
+            XCTFail()
+        }
+    }
+    
+    func testAddKeyValue_notNew_nonUsedFalse() throws {
+        let mia = MediaItemAttributes()
+        let keyValue: KeyValue = .notNew(userId: "Foo", used: false)
+        try mia.add(keyValue: keyValue)
+        let keyValueResult = mia.get(type: .notNew, key: "Foo")
+        XCTAssert(keyValue == keyValueResult)
+        switch keyValueResult {
+        case .notNew(userId: let userId, used: let used):
+            XCTAssert(userId == "Foo")
+            XCTAssert(used == false)
+        default:
+            XCTFail()
+        }
+    }
+    
+    // Show that a key that's not there doesn't cause a failure.
+    func testGetKeyValue_notNew_noKeyPresent() throws {
+        let mia = MediaItemAttributes()
+        let keyValueResult = mia.get(type: .notNew, key: "Foo")
+        switch keyValueResult {
+        case .notNew(userId: let userId, used: let used):
+            XCTAssert(userId == "Foo")
+            XCTAssert(used == nil)
+        default:
+            XCTFail()
+        }
+    }
+    
+    func testAddNewRecord_notNew() throws {
+        let coder = JSONEncoder()
+        let keyValue: KeyValue = .notNew(userId: "Foo", used: true)
+        let data = try coder.encode(keyValue)
+        
+        let mia = MediaItemAttributes()
+        try mia.add(newRecord: data)
+    }
+
+    func testValidTrue_notNew() throws {
+        let coder = JSONEncoder()
+        let keyValue: KeyValue = .notNew(userId: "Foo", used: true)
+        let data = try coder.encode(keyValue)
+        
+        XCTAssert(MediaItemAttributes.valid(uploadContents: data))
+    }
+    
+    func testNotNewUserIdKeys_oneUserId() throws {
+        let userId = "Foo"
+        let mia = MediaItemAttributes()
+        let keyValue: KeyValue = .notNew(userId: userId, used: true)
+        try mia.add(keyValue: keyValue)
+        
+        let keys = mia.notNewUserIdKeys()
+        guard keys.count == 1 else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssert(keys.first == userId)
+    }
+    
+    func testNotNewUserIdKeys_twoUserIds() throws {
+        let userId1 = "Fido"
+        let userId2 = "Bido"
+
+        let mia = MediaItemAttributes()
+        
+        let keyValue1: KeyValue = .notNew(userId: userId1, used: true)
+        try mia.add(keyValue: keyValue1)
+        let keyValue2: KeyValue = .notNew(userId: userId2, used: true)
+        try mia.add(keyValue: keyValue2)
+        
+        let keys = mia.notNewUserIdKeys()
+        guard keys.count == 2 else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssert(keys.contains(userId1))
+        XCTAssert(keys.contains(userId2))
+    }
+    
+    func testNotNewUserIdKeys_emptyMia() {
+        let mia = MediaItemAttributes()
+        let keys = mia.notNewUserIdKeys()
+        XCTAssert(keys.count == 0)
+    }
+    
+    func testNotNewUserIdKeys_decodedEmptyMia() throws {
+        let data = try MediaItemAttributes.emptyFile()
+        let decoder = JSONDecoder()
+        let mia = try decoder.decode(MediaItemAttributes.self, from: data)
+        let keys = mia.notNewUserIdKeys()
+        XCTAssert(keys.count == 0)
+    }
 }

@@ -14,6 +14,11 @@ public enum KeyType {
     case readCount
     case keyword
     case badge
+    
+    // This is to cause newly downloaded items to not be marked as "new"
+    // on a new device for a user, when they'd viewed the item on a different
+    // device already.
+    case notNew
 }
  
 // Each case here must correspond to one KeyType case
@@ -22,8 +27,11 @@ public enum KeyValue: Codable, Equatable {
     case keyword(String, used:Bool?)
     case badge(userId: String, code: String?)
     
+    // If notNew is added, it should only have used == true.
+    case notNew(userId: String, used:Bool?)
+    
     enum CodingKeys: CodingKey {
-        case readCount, keyword, badge
+        case readCount, keyword, badge, notNew
     }
     
     public init(from decoder: Decoder) throws {
@@ -48,7 +56,13 @@ public enum KeyValue: Codable, Equatable {
             let userId = try nestedContainer.decode(String.self)
             let code = try nestedContainer.decode(String?.self)
             self = .badge(userId: userId, code: code)
-
+            
+        case .notNew:
+            var nestedContainer = try container.nestedUnkeyedContainer(forKey: .notNew)
+            let userId = try nestedContainer.decode(String.self)
+            let used = try nestedContainer.decode(Bool?.self)
+            self = .notNew(userId: userId, used: used)
+            
         default:
             throw DecodingError.dataCorrupted(
                 DecodingError.Context(
@@ -75,6 +89,10 @@ public enum KeyValue: Codable, Equatable {
             var nestedContainer = container.nestedUnkeyedContainer(forKey: .badge)
             try nestedContainer.encode(userId)
             try nestedContainer.encode(code)
+        case .notNew(userId: let userId, used: let used):
+            var nestedContainer = container.nestedUnkeyedContainer(forKey: .notNew)
+            try nestedContainer.encode(userId)
+            try nestedContainer.encode(used)
         }
     }
 }
@@ -117,12 +135,16 @@ public class MediaItemAttributes: WholeFileReplacer, Codable {
     // Key: userId; Value: Badge code
     var badges = KeyValues<String, String>()
     
+    // Key: userId; Value: true/false (true iff the key is actually found)
+    var notNew = KeyValues<String, Bool>()
+    
     public required init(with data: Data) throws {
         let decoder = JSONDecoder()
         let selfObject = try decoder.decode(Self.self, from: data)
         readCounts = selfObject.readCounts
         keywords = selfObject.keywords
         badges = selfObject.badges
+        notNew = selfObject.notNew
     }
     
     // Saves current media item attributes, in JSON format, to the file.
@@ -200,6 +222,11 @@ public class MediaItemAttributes: WholeFileReplacer, Codable {
                 throw MediaItemAttributesError.nilValue
             }
             self.badges.add(key: userId, value: code)
+        case .notNew(userId: let userId, used: let used):
+            guard let used = used else {
+                throw MediaItemAttributesError.nilValue
+            }
+            self.notNew.add(key: userId, value: used)
         }
     }
     
@@ -216,12 +243,21 @@ public class MediaItemAttributes: WholeFileReplacer, Codable {
         case .badge:
             let value = self.badges.get(key: key)
             return .badge(userId: key, code: value)
+
+        case .notNew:
+            let value = self.notNew.get(key: key)
+            return .notNew(userId: key, used: value)
         }
     }
     
     // Get all userId key's for badges. Client can then retrieve the values for each key.
     public func badgeUserIdKeys() -> Set<String> {
         Set<String>(badges.contents.keys)
+    }
+
+    // Get all userId key's for `notNew`. Client can then retrieve the values for each key.
+    public func notNewUserIdKeys() -> Set<String> {
+        Set<String>(notNew.contents.keys)
     }
     
     // If `onlyThoseUsed` is true, then only those keywords in active use (with get result `true`) are returned. Otherwise, all keywords are returned.
